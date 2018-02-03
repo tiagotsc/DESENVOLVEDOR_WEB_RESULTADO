@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Avaliação InfoIdéias</title>
+        <meta charset="utf-8">
+        <link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css">
+        <link type="text/css" rel="stylesheet" href="/css/estilo.css">
+        <link type="text/css" rel="stylesheet" href="/css/jquery-ui.min.css">
+        <link type="text/css" rel="stylesheet" href="/css/chosen.min.css">
+    </head>
+    <body>
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    </button>
+                    <!--<a class="navbar-brand" href="<?= $this->tag->linkTo([['for' => 'site.inicio']]) ?>">Real State</a>-->
+                </div>
+                <div id="navbar" class="navbar-collapse collapse navbar-right">
+                    <ul class="nav navbar-nav">
+                    <li class="active"><?= $this->tag->linkTo([['for' => 'site.inicio'], 'Início']) ?></li>
+                    <li><?= $this->tag->linkTo([['for' => 'site.imovel.listar'], 'Cadastro de Imóveis']) ?></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12 text-center">
+            <h1>Adicionar Imovel</h1>
+        </div>
+    </div>
+    <div class="row">
+            <?= $this->tag->form(['imoveis/salvar', 'id' => 'frm-imoveis', 'method' => 'post', 'enctype' => 'multipart/form-data']) ?>
+        <div class="col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Dados Básicos</h3>
+                </div>
+                <div class="panel-body">
+                    <p>Código, tipo de imovel, filial, etc..</p>
+                    
+                    <div class="col-xs-4">
+                        <label for='codigo'>Código<span class="obrigatorio">*</span></label>
+                        <?= $this->tag->textField(['codigo', 'class' => 'form-control', 'maxlength' => 4, 'placeholder' => 'No máximo 4 caracteres']) ?>
+                    </div>
+                    <div class="col-xs-4">
+                        <label for='titulo_imovel'>Título do imóvel<span class="obrigatorio">*</span></label>
+                        <?= $this->tag->textField(['titulo_imovel', 'class' => 'form-control']) ?>
+                    </div>
+                    <div class="col-xs-4">
+                        <label for='tipo_imovel_id'>Tipo de imóvel<span class="obrigatorio">*</span></label>
+                        <?= $this->tag->select(['tipo_imovel_id', $tipoImovel, 'using' => ['id', 'nome'], 'class' => 'form-control', 'useEmpty' => true, 'emptyText' => 'Por favor, seleccione uma opção', 'emptyValue' => '']) ?>
+                    </div>
+                    <div class="col-xs-4">
+                        <label for='filial_id'>Filial<span class="obrigatorio">*</span></label>
+                        <?= $this->tag->select(['filial_id', $filial, 'using' => ['id', 'nome'], 'class' => 'form-control', 'useEmpty' => true, 'emptyText' => 'Por favor, selecione uma opção', 'emptyValue' => '']) ?>
+                    </div>
+                    <div class="col-xs-4">
+                        <label id="labelPublicado" for='publicado'>Publicar:</label>
+                        <input type="checkbox" id="publicado" name="publicado" value="S"/> Sim
+                    </div>
+                    <div id="divDataExpiracao" class="col-xs-4">
+                        <label for='data_expiracao'>Data de expiração<span class="obrigatorio">*</span></label>
+                        <?= $this->tag->textField(['data_expiracao', 'readonly' => 'readonly', 'class' => 'data form-control']) ?>
+                    </div>
+                    <div class="col-xs-4">
+                        <label for='ativo'>Status</label>
+                        <?= $this->tag->select(['ativo', ['S' => 'Sim', 'N' => 'Não'], 'class' => 'form-control']) ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Localizacao</h3>
+                </div>
+                <div class="panel-body">
+                    <p>logradouro, bairro, numero...</p>
+                    <div class="col-xs-4">
+                        <label for='bairro'>Bairro<span class="obrigatorio">*</span></label>
+                        <?= $this->tag->select(['bairro', $bairro, 'using' => ['id', 'nome'], 'class' => 'form-control', 'useEmpty' => true, 'emptyText' => 'Por favor, selecione uma opção', 'emptyValue' => '']) ?>
+                    </div>
+                    <div class="col-xs-4 localidade">
+                        <label id="labelLogradouro" for='logradouro_id'>Logradouro<span class="obrigatorio">*</span></label>
+                        <?= $this->tag->select(['logradouro_id', $logradouro, 'using' => ['id', 'nome'], 'class' => 'form-control', 'useEmpty' => true, 'emptyText' => 'Por favor, selecione uma opção', 'emptyValue' => '']) ?>
+                    </div>
+                    <div class="col-xs-4 localidade">
+                        <label for='numero'>Número<span class="obrigatorio">*</span></label>
+                        <?= $this->tag->textField(['numero', 'class' => 'form-control numero', 'placeholder' => 'Somente dígitos']) ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Valores</h3>
+                </div>
+                <div class="panel-body">
+                    <p>Qual o tipo do negocio (venda, aluguel) (Deve ser input Radio), valores.</p>
+                    <div class="col-xs-4">
+                        <label class="block" for='tipo_negocio'>Tipo negócio<span class="obrigatorio">*</span></label>
+                        <label>
+                        <input type="radio" name="tipo_negocio" value="V"><span class="estiloRadio">Vender</span>
+                        </label>
+                        <label>
+                        <input type="radio" name="tipo_negocio" value="A"><span class="estiloRadio">Alugar</span>
+                        </label>
+                    </div>
+                    <div id="vender" class="col-xs-4">
+                        <label for='valor_venda'>Valor venda<span class="obrigatorio">*</span></label>
+                        <?= $this->tag->textField(['valor_venda', 'class' => 'form-control dinheiro']) ?>
+                    </div>
+                    <div id="alugar" class="col-xs-4">
+                        <label for='valor_aluguel'>Valor alugar<span class="obrigatorio">*</span></label>
+                        <?= $this->tag->textField(['valor_aluguel', 'class' => 'form-control dinheiro']) ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Imagem</h3>
+                    </div>
+                    <div class="panel-body">
+                        
+                        <div id="selecImagem" class="col-xs-4">
+                            <div class="alert alert-warning">
+                                <strong>Formato aceito!</strong> Somente jpg/jpeg ou png.
+                            </div>
+                            <label for='file_imagem'>Selecionar imagem:</label>
+                            <input type="file" id="file_imagem" name="file_imagem">
+                        </div>
+                    </div>
+                </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Detalhes</h3>
+                </div>
+                <div class="panel-body">
+                    <p>Qtd de quartos, metragem, etc...</p>
+                    <div class="col-xs-4">
+                        <label for='dormitorios'>Dormitórios</label>
+                        <?= $this->tag->textField(['dormitorios', 'class' => 'form-control numero', 'placeholder' => 'Quantidade']) ?>
+                    </div>
+                    <div class="col-xs-4">
+                        <label for='area_terreno'>Metragem (m²)</label>
+                        <?= $this->tag->textField(['area_terreno', 'class' => 'form-control metragem']) ?>
+                    </div>
+                    <div class="col-xs-4">
+                        <label for='banheiros'>Banheiros</label>
+                        <?= $this->tag->textField(['banheiros', 'class' => 'form-control numero', 'placeholder' => 'Quantidade']) ?>
+                    </div>
+                    <div class="col-xs-4">
+                        <label for='vagas_garagem'>Vaga garagem</label>
+                        <?= $this->tag->textField(['vagas_garagem', 'class' => 'form-control numero', 'placeholder' => 'Quantidade']) ?>
+                    </div>
+                    <div class="col-xs-12">
+                        <label for="descricao">Descrição</label>
+                        <textarea class="form-control" rows="5" id="descricao" name="descricao"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <input type="submit" value="Salvar" class="btn btn-success">
+            </div>
+        </div>
+        <?= $this->tag->endForm() ?>
+    </div>
+</div>
+
+        <!-- Styles/Scripts-->
+        <link type="text/css" rel="stylesheet" href="/css/styles.css">
+        <script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="/js/scripts.js"></script>
+        <script type="text/javascript" src="/js/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="/js/jquery.validate.min.js"></script>
+        <script type="text/javascript" src="/js/jquery.maskMoney.min.js"></script>
+        <script type="text/javascript" src="/js/jquery.mask.min.js"></script>
+        <script type="text/javascript" src="/svg-with-js/js/chosen.jquery.min.js"></script>
+        <script type="text/javascript" src="/svg-with-js/js/fontawesome-all.js"></script>
+        <script type="text/javascript">
+            $( document ).ready(function() {
+                $("#logradouro_id").chosen({no_results_text: "Não localizados!"});
+                $(".dinheiro").maskMoney({prefix:'R$ ', allowNegative: true, thousands:'.', decimal:',', affixesStay: false});
+                $(".metragem").maskMoney({prefix:'', allowNegative: true, thousands:'', decimal:'.', affixesStay: false});
+                $("#vender").hide();
+                $("#alugar").hide();
+                $("#divDataExpiracao").hide();
+                $(".localidade").hide();
+                $("input[name='publicado']").prop("checked", true);
+                $("#divDataExpiracao").show();
+
+                // INICIO EDITAR
+                if($("#id").val() != '' && $("#id").val() !== undefined){
+                if( $("input[name='publicado']").prop("checked")){
+                    $("#divDataExpiracao").show();
+                }else{
+                    $("#divDataExpiracao").hide();
+                }
+                
+                    $(".localidade").show();
+                
+                if($('[type=radio][name=tipo_negocio]:checked').val() == 'V'){ // Vender
+                    $("#vender").show();
+                }else{ // Alugar
+                    $("#alugar").show();
+                }
+                }
+                // FIM EDITAR
+
+                $("#codigo").keyup(function(){
+                    if($(this).val().length == 4){
+                        $.ajax({
+                        dataType: "json",
+                        type: 'POST',
+                        url: '<?= $this->url->get('imoveis/ajaxExisteCodigo') ?>',
+                        data: {'codigo': $(this).val()},
+                        success: function(data) { 
+                            if(data.status == 'SIM'){
+                                alert("Código já existe, tente outro, por favor.");
+                                $("#codigo").val('');
+                            }
+                        }
+                        });
+                    }
+                });
+
+                $("#bairro").change(function(){
+                    if($(this).val() != ''){
+
+                        $.ajax({
+                        dataType: "json",
+                        type: 'POST',
+                        url: '<?= $this->url->get('imoveis/ajaxGetLogradouros') ?>',
+                        data: {'bairro': $(this).val()},
+                        success: function(data) { 
+                            if(data.length > 0){
+                                $("#logradouro_id").html('<option value="">Por favor, selecione uma opção</option>');
+                                $.each(data, function() {
+                                    $("#logradouro_id").append('<option value="'+this.id+'">'+this.nome+'</option>');
+                                });
+                                $("#logradouro_id").trigger("chosen:updated");
+                                $("#logradouro_id").trigger("liszt:updated");
+                            }
+                        }
+                        });
+                        $(".localidade").show();
+                    }else{
+                        $("#logradouro_id").html('<option value="">Por favor, selecione uma opção</option>');
+                        $("#logradouro_id").trigger("chosen:updated");
+                        $("#logradouro_id").trigger("liszt:updated");
+                        $(".localidade").hide();
+                    }
+                    
+                });
+
+                $("input[name='tipo_negocio']").click(function(){
+                    if($(this).val() == 'V'){
+                        $("#vender").show();
+                        $("#alugar").hide();
+                        $("#valor_aluguel").val('');
+                    }else{
+                        $("#vender").hide();
+                        $("#alugar").show();
+                        $("#valor_venda").val('');
+                    }
+                });
+
+                $(".numero").keyup(function(event){ 
+                    if($(this).val() != ''){ 
+                        if(('0123456789'.search(event.key) >= 0) == false){
+                            $(this).val('');
+                        }
+                    }
+                    
+                });
+
+                $("#publicado").click(function(){
+                    if($(this).prop("checked")){
+                        $("#divDataExpiracao").show();
+                    }else{
+                        $("#divDataExpiracao").hide();
+                        $("#data_expiracao").val('');
+                    }
+                });
+
+                $(".data").datepicker({
+                    dateFormat: 'dd/mm/yy',
+                    dayNames: ['Domingo','Segunda','Ter&ccedil;a','Quarta','Quinta','Sexta','S&aacute;bado','Domingo'],
+                    dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                    dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','S&aacute;b','Dom'],
+                    monthNames: ['Janeiro','Fevereiro','Mar&ccedil;o','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                    monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                    nextText: 'Pr&oacute;ximo',
+                    prevText: 'Anterior',
+                    minDate    : new Date(),
+                    
+                    // Traz o calendário input datepicker para frente da modal
+                    beforeShow :  function ()  { 
+                        setTimeout ( function (){ 
+                            $ ( '.ui-datepicker' ). css ( 'z-index' ,  99999999999999 ); 
+                        },  0 ); 
+                    } 
+                });
+
+                $.validator.setDefaults({ ignore: ":hidden:not(select)" })
+                $("#frm-imoveis").validate({
+                    debug: false,
+                    rules: {
+                        codigo: {
+                            required: true
+                        },
+                        titulo_imovel: {
+                            required: true
+                        },
+                        tipo_imovel_id: {
+                            required: true
+                        },
+                        filial_id: {
+                            required: true
+                        },
+                        bairro: {
+                            required: true
+                        },
+                        logradouro_id: {
+                            required: true
+                        },
+                        numero: {
+                            required: true
+                        },
+                        tipo_negocio: {
+                            required: true
+                        },
+                        valor_venda:{
+                            required:{
+                                depends: function(element){
+                                    var status = false;
+                                    if( $("input[name='tipo_negocio']:checked").val() == 'V'){
+                                        var status = true;
+                                    }
+                                    return status;
+                                }
+                            }
+                        },
+                        valor_aluguel:{
+                            required:{
+                                depends: function(element){
+                                    var status = false;
+                                    if( $("input[name='tipo_negocio']:checked").val() == 'A'){
+                                        var status = true;
+                                    }
+                                    return status;
+                                }
+                            }
+                        },
+                        data_expiracao:{
+                            required:{
+                                depends: function(element){
+                                    var status = false;
+                                    if( $("input[name='publicado']").prop("checked")){
+                                        var status = true;
+                                    }
+                                    return status;
+                                }
+                            }
+                        },
+                    },
+                    messages: {
+                        codigo: {
+                            required: "Informe o código."
+                        },
+                        titulo_imovel: {
+                            required: "Informe o título."
+                        },
+                        tipo_imovel_id: {
+                            required: "Selecione o tipo de imóvel."
+                        },
+                        filial_id: {
+                            required: "Selecione a filial."
+                        },
+                        bairro: {
+                            required: "Selecione o bairro."
+                        },
+                        logradouro_id: {
+                            required: "Selecione o logradouro."
+                        },
+                        numero: {
+                            required: "Informe o número."
+                        },
+                        tipo_negocio: {
+                            required: "Selecione o tipo de negócio."
+                        },
+                        valor_venda: {
+                            required: "Informe o valor."
+                        },
+                        valor_aluguel: {
+                            required: "Informe o valor."
+                        },
+                        data_expiracao: {
+                            required: "Informe a data."
+                        }
+                    }/*,
+                    submitHandler: function(form) { // SUBMETER POR AJAX
+                        //alert($(form).serialize());
+                        //alert('AJAX');
+                        $("#salvar").prop('disabled', true).val('AGUARDE...');
+                        $(form).submit();
+                    }*/
+                });        
+
+            });
+
+        </script>
+    </body>
+</html>
